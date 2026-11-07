@@ -1,7 +1,11 @@
 package com.ramji.immortalis;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 import android.os.Bundle;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.graphics.Color;
@@ -31,6 +35,8 @@ public class MainActivity extends Activity {
     private GaugeView gauge;
     private GraphView graph;
 
+    private static final int OVERLAY_PERMISSION_REQUEST = 701;
+
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
 
@@ -56,6 +62,49 @@ public class MainActivity extends Activity {
 
         buildDashboard();
         startReading();
+    }
+
+    private void startOverlay() {
+        if (!Settings.canDrawOverlays(this)) {
+            Intent permission = new Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName())
+            );
+            startActivityForResult(permission, OVERLAY_PERMISSION_REQUEST);
+            return;
+        }
+
+        Intent service = new Intent(this, OverlayService.class);
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(service);
+        } else {
+            startService(service);
+        }
+
+        Toast.makeText(this, "GPU overlay starting...", Toast.LENGTH_SHORT).show();
+    }
+
+    private void stopOverlay() {
+        stopService(new Intent(this, OverlayService.class));
+        Toast.makeText(this, "GPU overlay stopped", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == OVERLAY_PERMISSION_REQUEST) {
+            if (Settings.canDrawOverlays(this)) {
+                startOverlay();
+            } else {
+                Toast.makeText(
+                    this,
+                    "Overlay permission not granted",
+                    Toast.LENGTH_LONG
+                ).show();
+            }
+        }
     }
 
     private void startReading() {
@@ -329,6 +378,38 @@ public class MainActivity extends Activity {
         status.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         status.setGravity(Gravity.CENTER);
         root.addView(status);
+        // FLOATING GPU OVERLAY CONTROLS
+        addSpace(root, 12);
+
+        LinearLayout overlayControls = new LinearLayout(this);
+        overlayControls.setOrientation(LinearLayout.HORIZONTAL);
+        overlayControls.setGravity(Gravity.CENTER);
+        overlayControls.setPadding(0, dp(4), 0, dp(4));
+
+        Button startButton = new Button(this);
+        startButton.setText("START OVERLAY");
+        startButton.setTextColor(Color.BLACK);
+        startButton.setTextSize(12);
+        startButton.setAllCaps(false);
+        startButton.setBackground(round(GREEN, 14));
+        startButton.setOnClickListener(v -> startOverlay());
+
+        Button stopButton = new Button(this);
+        stopButton.setText("STOP OVERLAY");
+        stopButton.setTextColor(WHITE);
+        stopButton.setTextSize(12);
+        stopButton.setAllCaps(false);
+        stopButton.setBackground(round(CARD2, 14));
+        stopButton.setOnClickListener(v -> stopOverlay());
+
+        LinearLayout.LayoutParams buttonParams =
+            new LinearLayout.LayoutParams(0, dp(54), 1);
+        buttonParams.setMargins(dp(5), 0, dp(5), 0);
+
+        overlayControls.addView(startButton, buttonParams);
+        overlayControls.addView(stopButton, buttonParams);
+        root.addView(overlayControls);
+
 
         addSpace(root, 16);
 
