@@ -408,13 +408,148 @@ public class MainActivity extends Activity {
 
         overlayControls.addView(startButton, buttonParams);
         overlayControls.addView(stopButton, buttonParams);
+
         root.addView(overlayControls);
+
+        // IMMORTALIS GAMING HUD SETTINGS
+        addSpace(root, 18);
+        addSection(root, "GAMING HUD SETTINGS");
+
+        android.content.SharedPreferences hudPrefs =
+            getSharedPreferences("hud_settings", MODE_PRIVATE);
+
+        LinearLayout hudSettings = card();
+        hudSettings.setPadding(dp(16), dp(16), dp(16), dp(16));
+
+        TextView modeLabel = text("DEFAULT HUD LAYOUT", 10, MUTED);
+        modeLabel.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        hudSettings.addView(modeLabel);
+        addSpace(hudSettings, 6);
+
+        Spinner modeSpinner = new Spinner(this);
+        String[] modeOptions = {"Compact", "Expanded"};
+        ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(
+            this, android.R.layout.simple_spinner_item, modeOptions);
+        modeAdapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item);
+        modeSpinner.setAdapter(modeAdapter);
+
+        String savedMode = hudPrefs.getString("hud_mode", "compact");
+        modeSpinner.setSelection(
+            savedMode.equals("expanded") ? 1 : 0);
+
+        hudSettings.addView(modeSpinner,
+            new LinearLayout.LayoutParams(-1, dp(48)));
+
+        addSpace(hudSettings, 14);
+
+        TextView transparencyLabel =
+            text("HUD TRANSPARENCY", 10, MUTED);
+        transparencyLabel.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        hudSettings.addView(transparencyLabel);
+
+        TextView transparencyValue =
+            text(hudPrefs.getInt("hud_transparency", 90) + "%", 16, GREEN);
+        hudSettings.addView(transparencyValue);
+
+        SeekBar transparencySeek = new SeekBar(this);
+        transparencySeek.setMax(65);
+        transparencySeek.setProgress(
+            Math.max(0, Math.min(65,
+                hudPrefs.getInt("hud_transparency", 90) - 35)));
+
+        transparencySeek.setOnSeekBarChangeListener(
+            new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(
+                    SeekBar seekBar, int progress, boolean fromUser) {
+                    transparencyValue.setText((progress + 35) + "%");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
+
+        hudSettings.addView(transparencySeek,
+            new LinearLayout.LayoutParams(-1, dp(42)));
+
+        addSpace(hudSettings, 10);
+
+        TextView refreshLabel =
+            text("HUD REFRESH INTERVAL", 10, MUTED);
+        refreshLabel.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        hudSettings.addView(refreshLabel);
+        addSpace(hudSettings, 6);
+
+        Spinner refreshSpinner = new Spinner(this);
+        String[] refreshOptions = {
+            "500 milliseconds",
+            "1 second",
+            "2 seconds"
+        };
+
+        ArrayAdapter<String> refreshAdapter = new ArrayAdapter<>(
+            this, android.R.layout.simple_spinner_item, refreshOptions);
+        refreshAdapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item);
+        refreshSpinner.setAdapter(refreshAdapter);
+
+        int savedRefresh = hudPrefs.getInt("hud_refresh", 1000);
+        int refreshSelection =
+            savedRefresh == 500 ? 0 :
+            savedRefresh == 2000 ? 2 : 1;
+
+        refreshSpinner.setSelection(refreshSelection);
+
+        hudSettings.addView(refreshSpinner,
+            new LinearLayout.LayoutParams(-1, dp(48)));
+
+        addSpace(hudSettings, 14);
+
+        Button saveHudButton = new Button(this);
+        saveHudButton.setText("SAVE & APPLY HUD SETTINGS");
+        saveHudButton.setTextColor(Color.BLACK);
+        saveHudButton.setTextSize(12);
+        saveHudButton.setAllCaps(false);
+        saveHudButton.setBackground(round(GREEN, 14));
+
+        saveHudButton.setOnClickListener(v -> {
+            int[] refreshValues = {500, 1000, 2000};
+            int selectedRefresh = refreshValues[
+                refreshSpinner.getSelectedItemPosition()];
+
+            String selectedMode =
+                modeSpinner.getSelectedItemPosition() == 1
+                    ? "expanded" : "compact";
+
+            int selectedTransparency =
+                transparencySeek.getProgress() + 35;
+
+            hudPrefs.edit()
+                .putString("hud_mode", selectedMode)
+                .putInt("hud_transparency", selectedTransparency)
+                .putInt("hud_refresh", selectedRefresh)
+                .apply();
+
+            startOverlay();
+        });
+
+        hudSettings.addView(saveHudButton,
+            new LinearLayout.LayoutParams(-1, dp(52)));
+
+        root.addView(hudSettings);
+
 
 
         addSpace(root, 16);
 
         TextView footer = text(
-            "IMMORTALIS MONITOR  •  VERSION 1.2",
+            "IMMORTALIS MONITOR  •  VERSION 1.4",
             10, MUTED);
         footer.setGravity(Gravity.CENTER);
         root.addView(footer);
