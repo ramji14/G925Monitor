@@ -1,4 +1,4 @@
-package com.ramji.immortalis;
+package com.g925monitor.app;
 
 import android.app.Service;
 import android.app.Notification;
@@ -37,11 +37,11 @@ import java.util.concurrent.Executors;
 public class OverlayService extends Service {
 
     private static final String ACTION_HIDE =
-            "com.ramji.immortalis.ACTION_HIDE_HUD";
+            "com.g925monitor.app.ACTION_HIDE_HUD";
     private static final String ACTION_SHOW =
-            "com.ramji.immortalis.ACTION_SHOW_HUD";
+            "com.g925monitor.app.ACTION_SHOW_HUD";
     private static final String ACTION_STOP =
-            "com.ramji.immortalis.ACTION_STOP_HUD";
+            "com.g925monitor.app.ACTION_STOP_HUD";
 
     private boolean foregroundStarted = false;
 
@@ -143,13 +143,13 @@ public class OverlayService extends Service {
     }
 
     private void createNotification() {
-        String channelId = "immortalis_overlay";
+        String channelId = "g925monitor_overlay";
 
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel =
                     new NotificationChannel(
                             channelId,
-                            "Immortalis Gaming HUD",
+                            "G925 Gaming HUD",
                             NotificationManager.IMPORTANCE_LOW);
 
             NotificationManager manager =
@@ -163,7 +163,7 @@ public class OverlayService extends Service {
                         ? new Notification.Builder(this, channelId)
                         : new Notification.Builder(this);
 
-        builder.setContentTitle("Immortalis Monitor")
+        builder.setContentTitle("G925 Monitor")
                 .setContentText(
                         attached
                                 ? "Gaming HUD is running"
@@ -278,7 +278,7 @@ public class OverlayService extends Service {
                 Color.rgb(255, 181, 75));
 
         headerText = makeText(
-                "● IMMORTALIS  •  GAMING HUD",
+                "● G925  •  GAMING HUD",
                 10, Color.rgb(0, 235, 170));
 
         sessionText = makeText(
@@ -458,7 +458,7 @@ public class OverlayService extends Service {
         header.setOrientation(LinearLayout.HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
 
-        headerText.setText("IMMORTALIS // GAMING HUD");
+        headerText.setText("G925 // GAMING HUD");
         headerText.setTextSize(11);
         headerText.setTextColor(Color.rgb(165, 255, 55));
 
@@ -490,7 +490,7 @@ public class OverlayService extends Service {
                 gpuLoad + "%", 36, Color.rgb(165, 255, 55));
 
         TextView hardware = makeText(
-                "IMMORTALIS G925 MC11", 9,
+                "G925 MC11 GPU", 9,
                 Color.rgb(145, 163, 183));
 
         loadSection.addView(loadLabel);

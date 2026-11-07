@@ -1,4 +1,4 @@
-package com.ramji.immortalis;
+package com.g925monitor.app;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -241,7 +241,7 @@ public class MainActivity extends Activity {
         LinearLayout branding = new LinearLayout(this);
         branding.setOrientation(LinearLayout.VERTICAL);
 
-        TextView title = text("IMMORTALIS", 25, WHITE);
+        TextView title = text("G925 MONITOR", 25, WHITE);
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
 
         TextView subtitle = text("GPU PERFORMANCE MONITOR", 10, MUTED);
@@ -264,7 +264,7 @@ public class MainActivity extends Activity {
 
         // DEVICE INFO
         TextView device = text(
-            "POCO X8 PRO MAX  •  IMMORTALIS-G925 MC11",
+            "POCO X8 PRO MAX  •  G925 MC11 GPU",
             10, MUTED);
         device.setLetterSpacing(0.04f);
         root.addView(device);
@@ -411,7 +411,7 @@ public class MainActivity extends Activity {
 
         root.addView(overlayControls);
 
-        // IMMORTALIS GAMING HUD SETTINGS
+        // G925 GAMING HUD SETTINGS
         addSpace(root, 18);
         addSection(root, "GAMING HUD SETTINGS");
 
@@ -549,14 +549,14 @@ public class MainActivity extends Activity {
         addSpace(root, 16);
 
         TextView footer = text(
-            "IMMORTALIS MONITOR  •  VERSION 1.4",
+            "G925 MONITOR  •  VERSION 1.4",
             10, MUTED);
         footer.setGravity(Gravity.CENTER);
         root.addView(footer);
 
         addSpace(root, 8);
 
-        TextView footer2 = text("BUILT FOR IMMORTALIS-G925", 9, MUTED);
+        TextView footer2 = text("BUILT FOR G925 MC11 GPU", 9, MUTED);
         footer2.setGravity(Gravity.CENTER);
         root.addView(footer2);
     }

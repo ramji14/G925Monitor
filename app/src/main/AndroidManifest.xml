@@ -7,7 +7,7 @@
 
     <application
         android:theme="@android:style/Theme.Material.NoActionBar"
-        android:label="Immortalis Monitor"
+        android:label="G925 Monitor"
         android:allowBackup="false">
 
         <activity
